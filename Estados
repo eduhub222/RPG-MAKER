@@ -1,0 +1,349 @@
+module EDU
+  module COMANDOS_INFOR
+    
+    #=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
+    # - Command Window Settings -
+    #=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
+    # This section adjusts the commands that appear in the command window used
+    # for the status screen. Rearrange the commands, add new ones, remove them
+    # as you see fit.
+    # 
+    # -------------------------------------------------------------------------
+    # :command         Description
+    # -------------------------------------------------------------------------
+    # :general         Adds general page.
+    # :parameters      Adds parameters page.
+    # :properties      Adds properties page.
+    # :biography       Adds biography page.
+    # 
+    # :rename          Requires YEA - Rename Actor
+    # :retitle         Requires YEA - Retitle Actor
+    # 
+    #=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
+    COMMANDS =[ # The order at which the menu items are shown.
+       [  :estado_1,      "Fome"],
+       [  :estado_2,      "Sede"],
+       [  :estado_3,      "Fadiga"],
+       [  :estado_4,      "Dor"],
+       [  :estado_5,      "Sangramento"],
+       [  :estado_6,      "Fratura"],
+       [  :estado_7,      "Pânico"],
+       [  :estado_8,      "Nervosismo"],
+       [  :estado_9,      "Desidratação"],
+       [  :estado_10,     "Inanição"],
+       [  :estado_11,     "Estado 11"],
+    #  [  :rename,      "Rename"],  # Requires YEA - Rename Actor
+    #  [    :retitle,    "Retitle"],  # Requires YEA - Rename Actor
+    ] # Do not remove this.
+  end
+end
+#===============================================================================
+#===============================================================================
+class Window_Estados < Window_Command
+  
+  #--------------------------------------------------------------------------
+  # public instance variables
+  #--------------------------------------------------------------------------
+  attr_accessor :item_window
+  
+  #--------------------------------------------------------------------------
+  # initialize
+  #--------------------------------------------------------------------------
+  def initialize(dx, dy)
+    super(dx, dy)
+    @actor = nil
+  end
+  
+  #--------------------------------------------------------------------------
+  # window_width
+  #--------------------------------------------------------------------------
+  def window_width; return 160; end
+  
+  #--------------------------------------------------------------------------
+  # actor=
+  #--------------------------------------------------------------------------
+  def actor=(actor)
+    return if @actor == actor
+    @actor = actor
+    refresh
+  end
+  
+  #--------------------------------------------------------------------------
+  # visible_line_number
+  #--------------------------------------------------------------------------
+  def visible_line_number; return 18; end
+  
+  #--------------------------------------------------------------------------
+  # ok_enabled?
+  #--------------------------------------------------------------------------
+  def ok_enabled?
+    return handle?(current_symbol)
+  end
+  
+  #--------------------------------------------------------------------------
+  # make_command_list
+  #--------------------------------------------------------------------------
+  def make_command_list
+    return unless @actor
+    for command in EDU::COMANDOS_INFOR::COMMANDS
+      case command[0]
+      #--- Default ---
+      when :estado_1, :estado_2, :estado_3, :estado_4, :estado_5, :estado_6,
+        :estado_7, :estado_8, :estado_9, :estado_10
+      add_command(command[1], command[0])  
+    end
+  end
+end
+  #--------------------------------------------------------------------------
+  # update
+  #--------------------------------------------------------------------------
+  def update
+    super
+    update_item_window
+  end
+  
+  #--------------------------------------------------------------------------
+  # update_item_window
+  #--------------------------------------------------------------------------
+  def update_item_window
+    return if @item_window.nil?
+    return if @current_index == current_symbol
+    @current_index = current_symbol
+    @item_window.refresh
+  end
+  
+  #--------------------------------------------------------------------------
+  # item_window=
+  #--------------------------------------------------------------------------
+  def item_window=(window)
+    @item_window = window
+    update
+  end
+  
+  #--------------------------------------------------------------------------
+  # update_help
+  #--------------------------------------------------------------------------
+#  def update_help
+#    return if @actor.nil?
+#    @help_window.set_text(@actor.actor.description)
+#  end
+  
+end # Window_StatusCommand
+
+
+#===============================================================================
+#===============================================================================
+class Window_Estados_Actor < Window_Base
+  
+  #--------------------------------------------------------------------------
+  # initialize
+  #--------------------------------------------------------------------------
+   def initialize(dx, dy)
+    super(dx, dy, window_width, fitting_height(3))
+    @actor = nil
+   end
+  
+  #--------------------------------------------------------------------------
+  # window_width
+  #--------------------------------------------------------------------------
+    def window_width; return Graphics.width - 160; end
+  
+  #--------------------------------------------------------------------------
+  # actor=
+  #--------------------------------------------------------------------------
+  def actor=(actor)
+    return if @actor == actor
+    @actor = $game_actors[1]
+    refresh
+  end
+  
+  #--------------------------------------------------------------------------
+  # refresh
+  #--------------------------------------------------------------------------
+  def refresh
+    contents.clear
+    return unless @actor
+    draw_actor_face(@actor, 0, 0)
+    draw_actor_simple_status(@actor, 108, line_height / 2)
+   end
+  
+end # Window_Escolhas_Actor
+#===============================================================================
+#===============================================================================
+class Window_Estados_Opcoes < Window_Base
+  
+  #--------------------------------------------------------------------------
+  # initialize
+  #--------------------------------------------------------------------------
+  def initialize(x, y, command_window)
+    super(x, y, Graphics.width - 160, Graphics.height - 26)
+    @command_window = command_window
+    @actor = $game_actors[1]
+    refresh
+  end
+  
+  
+  #--------------------------------------------------------------------------
+  # actor=
+  #--------------------------------------------------------------------------
+  def actor=(actor)
+    return if @actor == actor
+    @actor = actor
+    refresh
+  end
+  
+  #--------------------------------------------------------------------------
+  # refresh
+  #--------------------------------------------------------------------------
+  def refresh
+    contents.clear
+    reset_font_settings
+    return unless @actor
+    draw_window_contents
+  end
+  
+  #--------------------------------------------------------------------------
+  # draw_window_contents
+  #--------------------------------------------------------------------------
+  def draw_window_contents
+    case @command_window.current_symbol
+      when :estado_1
+      draw_informacoes_1
+      when :estado_2
+      draw_informacoes_2 
+      when :estado_3
+      draw_informacoes_3
+      when :estado_4
+      draw_informacoes_4
+      when :estado_5
+      draw_informacoes_5 
+      when :estado_6
+      draw_informacoes_6
+      when :estado_7
+      draw_informacoes_7
+      when :estado_8
+      draw_informacoes_8
+      when :estado_9
+      draw_informacoes_9
+      when :estado_10
+      draw_informacoes_10
+    end
+  end
+  #--------------------------------------------------------------------------
+  # draw_actor_social_1
+  #-------------------------------------------------------------------------- 
+  #=================família================================================#  
+   def draw_informacoes_1
+   draw_text_ex(30, 0, "Fome") 
+   draw_icon(577, 0, 0)
+   #draw_icon(184, 0, 30)
+   draw_text_ex(0, 30, "Seu personagem fica com fome quando o marcador indica")
+   draw_text_ex(0, 50, "20 ou mais. Seu efeito:")
+   end  
+   def draw_informacoes_2
+   end
+   def draw_informacoes_2 
+   end
+   def draw_informacoes_3
+   end
+   def draw_informacoes_4
+   end 
+   def draw_informacoes_5
+   end  
+   def draw_informacoes_6
+   end 
+   def draw_informacoes_7
+   end 
+   def draw_informacoes_8
+   end 
+   def draw_informacoes_9
+   end 
+   def draw_informacoes_10
+   end 
+end # Window_StatusItem
+
+
+#===============================================================================
+#===============================================================================
+class Scene_Estados < Scene_MenuBase
+  
+  #--------------------------------------------------------------------------
+  # start
+  #--------------------------------------------------------------------------
+  def start
+    super
+   # create_help_window
+     create_command_window
+    #create_status_window
+     create_item_window
+    relocate_windows
+  end
+  
+  #--------------------------------------------------------------------------
+  # create_command_window
+  #--------------------------------------------------------------------------
+  def create_command_window
+#    wy = @help_window.height
+    @command_window = Window_Estados.new(0,0)
+    @command_window.viewport = @viewport
+    @command_window.actor = @actor
+  #  @command_window.help_window = @help_window
+    @command_window.set_handler(:cancel,   method(:return_scene))
+    @command_window.set_handler(:pagedown, method(:next_actor))
+    @command_window.set_handler(:pageup,   method(:prev_actor))
+  end
+  
+  #--------------------------------------------------------------------------
+  # process_custom_status_commands
+  #--------------------------------------------------------------------------
+
+  #--------------------------------------------------------------------------
+  # create_status_window
+  #--------------------------------------------------------------------------
+  def create_status_window
+#    wy = @help_window.height
+    @status_window = Window_Estados_Opcoes.new(0,0, @command_window.width)
+    @status_window.viewport = @viewport
+    @status_window.actor = @actor
+  end
+  
+  #--------------------------------------------------------------------------
+  # create_item_window
+  #--------------------------------------------------------------------------
+  def create_item_window 
+    dy = @command_window.height - 457
+    dx = @command_window.y + 158
+    @item_window = Window_Estados_Opcoes.new(dx, dy, @command_window)
+    @item_window.viewport = @viewport
+    @item_window.actor = @actor
+    @command_window.item_window = @item_window
+  end
+  
+  #--------------------------------------------------------------------------
+  # relocate_windows
+  #--------------------------------------------------------------------------
+  def relocate_windows
+   # return unless $imported["YEA-AceMenuEngine"]
+   # case Menu.help_window_location
+   # when 0 # Top
+   #   @help_window.y = 0
+   #   @command_window.y = @help_window.height
+   #   @item_window.y = @command_window.y + @command_window.height
+   # when 1 # Middle
+   #   @command_window.y = 0
+   #   @help_window.y = @command_window.height
+   #   @item_window.y = @help_window.y + @help_window.height
+   # else # Bottom
+   #   @command_window.y = 0
+   #   @item_window.y = @command_window.height
+   #   @help_window.y = @item_window.y + @item_window.height
+   # end
+   # @status_window.y = @command_window.y
+  end
+end # Scene_Status
+
+#==============================================================================
+# 
+# ▼ End of File
+# 
+#==============================================================================
